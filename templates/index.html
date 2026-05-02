@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFile - Advanced AES/RSA Encryption</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h1>SecureFile</h1>
+            </div>
+            <p>Military-grade AES & RSA file cryptography</p>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" id="tab-encrypt" onclick="switchTab('encrypt')">
+                <i class="fa-solid fa-lock"></i> Encrypt
+            </div>
+            <div class="tab" id="tab-decrypt" onclick="switchTab('decrypt')">
+                <i class="fa-solid fa-unlock"></i> Decrypt
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <!-- ENCRYPT SECTION -->
+            <div id="encrypt-section" class="section active fade-in">
+                <div class="input-group">
+                    <label>Encryption Method</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" id="btn-aes-enc" onclick="setAlgorithm('enc', 'AES')">AES</button>
+                        <button type="button" class="toggle-btn" id="btn-rsa-enc" onclick="setAlgorithm('enc', 'RSA')">RSA</button>
+                    </div>
+                    <p class="helper-text" id="help-enc-aes"><i class="fa-solid fa-circle-info"></i> Fast symmetric encryption. Best for large files. Requires a password.</p>
+                    <p class="helper-text hidden" id="help-enc-rsa"><i class="fa-solid fa-circle-info"></i> Hybrid asymmetric encryption. Generates a private key file for you automatically.</p>
+                </div>
+
+                <div class="file-drop-area" id="drop-area-enc">
+                    <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <p class="drop-title">Drag & Drop your file here</p>
+                    <p class="drop-subtitle">or</p>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('file-input-enc').click()">Browse Files</button>
+                    <input type="file" id="file-input-enc" hidden onchange="handleFileSelect('enc')">
+                    
+                    <div class="selected-file hidden" id="selected-file-enc" onclick="document.getElementById('file-input-enc').click()">
+                        <i class="fa-solid fa-file icon"></i> 
+                        <div class="file-details">
+                            <span id="file-name-enc" class="name">file.txt</span>
+                            <span id="file-size-enc" class="size">0 KB</span>
+                        </div>
+                        <i class="fa-solid fa-pen edit-icon"></i>
+                    </div>
+                </div>
+
+                <div class="input-group slide-down" id="pwd-group-enc">
+                    <label><i class="fa-solid fa-key"></i> Password</label>
+                    <input type="password" id="password-enc" placeholder="Enter a strong password">
+                </div>
+
+                <button class="btn-primary" onclick="processEncrypt()">
+                    <span id="btn-text-enc">Encrypt File</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- DECRYPT SECTION -->
+            <div id="decrypt-section" class="section hidden">
+                <div class="input-group">
+                    <label>Decryption Method</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" id="btn-aes-dec" onclick="setAlgorithm('dec', 'AES')">AES</button>
+                        <button type="button" class="toggle-btn" id="btn-rsa-dec" onclick="setAlgorithm('dec', 'RSA')">RSA</button>
+                    </div>
+                </div>
+
+                <div class="file-drop-area" id="drop-area-dec">
+                    <div class="drop-icon"><i class="fa-solid fa-file-shield"></i></div>
+                    <p class="drop-title">Drag & Drop encrypted file (.enc)</p>
+                    <button type="button" class="btn-secondary mt" onclick="document.getElementById('file-input-dec').click()">Browse Files</button>
+                    <input type="file" id="file-input-dec" hidden onchange="handleFileSelect('dec')">
+                    
+                    <div class="selected-file hidden" id="selected-file-dec" onclick="document.getElementById('file-input-dec').click()">
+                        <i class="fa-solid fa-file-circle-check icon text-success"></i> 
+                        <div class="file-details">
+                            <span id="file-name-dec" class="name">file.enc</span>
+                            <span id="file-size-dec" class="size">0 KB</span>
+                        </div>
+                        <i class="fa-solid fa-pen edit-icon"></i>
+                    </div>
+                </div>
+
+                <div class="input-group slide-down" id="pwd-group-dec">
+                    <label><i class="fa-solid fa-key"></i> Password</label>
+                    <input type="password" id="password-dec" placeholder="Enter your decryption password">
+                </div>
+
+                <div class="input-group hidden slide-down" id="key-group-dec">
+                    <label><i class="fa-solid fa-key"></i> Private Key (.pem)</label>
+                    <div class="file-select-small">
+                        <button type="button" class="btn-secondary small" onclick="document.getElementById('key-input-dec').click()">Select Key</button>
+                        <span id="key-name-dec" class="truncate">No key selected</span>
+                    </div>
+                    <input type="file" id="key-input-dec" accept=".pem" hidden onchange="handleKeySelect()">
+                </div>
+
+                <button class="btn-primary" onclick="processDecrypt()">
+                    <span id="btn-text-dec">Decrypt File</span>
+                    <i class="fa-solid fa-unlock-keyhole"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="loader-overlay hidden">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p id="loader-text">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="toast" class="toast hidden">
+        <i class="fa-solid fa-circle-exclamation error-icon"></i>
+        <div class="toast-content">
+            <h4 id="toast-title">Error</h4>
+            <p id="toast-message">Something went wrong.</p>
+        </div>
+        <button class="close-toast" onclick="hideToast()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
