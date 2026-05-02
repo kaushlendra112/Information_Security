@@ -11,7 +11,6 @@ Decryption: It reverses the process and restores the file to its original format
 
 ## Local Setup
 
-```
 1. Clone the repository:
 
 ```bash
@@ -35,5 +34,4 @@ python app.py
 
 ```text
 http://127.0.0.1:5000
-```
 ```
