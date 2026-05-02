@@ -14,7 +14,7 @@ Decryption: It reverses the process and restores the file to its original format
 1. Clone the repository:
 
 ```bash
-git clone 
+git clone https://github.com/kaushlendra112/Information_Security.git
 cd File_Encryption
 ```
 
